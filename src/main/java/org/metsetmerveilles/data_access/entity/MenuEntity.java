@@ -11,11 +11,17 @@ import lombok.Setter;
 public class MenuEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "menu_generator")
+    @SequenceGenerator(name = "menu_generator", sequenceName = "menu_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "label", nullable = false)
+    @Column(name = "label", nullable = false, unique = true)
     private String label;
 
+    public MenuEntity() {
+    }
 
+    public MenuEntity(String label) {
+        this.label = label;
+    }
 }
