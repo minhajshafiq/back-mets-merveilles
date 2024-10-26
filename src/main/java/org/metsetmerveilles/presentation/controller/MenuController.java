@@ -1,10 +1,9 @@
 package org.metsetmerveilles.presentation.controller;
 
+import org.metsetmerveilles.domain.model.Menu;
 import org.metsetmerveilles.domain.service.IMenuService;
 import org.metsetmerveilles.presentation.dto.MenuDto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +22,12 @@ public class MenuController {
         return menuService.getAllMenus().stream()
                 .map(menu -> new MenuDto(menu.label()))
                 .toList();
+    }
+
+    @PostMapping
+    public MenuDto create(@RequestBody MenuDto menuDto) {
+        Menu createdMenu = menuService.createMenu(menuDto.label());
+
+        return new MenuDto(createdMenu.label());
     }
 }
