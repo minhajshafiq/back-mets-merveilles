@@ -17,17 +17,18 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    @GetMapping
-    public List<MenuDto> list() {
-        return menuService.getAllMenus().stream()
-                .map(menu -> new MenuDto(menu.label()))
-                .toList();
-    }
+//    @GetMapping
+//    public List<MenuDto> list() {
+//        return menuService.getAllMenus().stream()
+//                .map(menu -> new MenuDto(menu.name()))
+//                .toList();
+//    }
+//
+//    @PostMapping
+//    public MenuDto create(@RequestBody MenuDto menuDto) {
+//        Menu createdMenu = menuService.createMenu(new Menu(menuDto.name()));
+//
+//        return new MenuDto(createdMenu.());
+//    }
 
-    @PostMapping
-    public MenuDto create(@RequestBody MenuDto menuDto) {
-        Menu createdMenu = menuService.createMenu(menuDto.label());
-
-        return new MenuDto(createdMenu.label());
-    }
 }
