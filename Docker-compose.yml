@@ -1,0 +1,5 @@
+services:
+  backend:
+    container_name: backend
+    build:
+        dockerfile: Dockerfile
