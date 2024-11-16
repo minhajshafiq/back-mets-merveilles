@@ -1,12 +1,17 @@
 package org.metsetmerveilles.data_access.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "menu")
 public class MenuEntity {
 
@@ -15,13 +20,24 @@ public class MenuEntity {
     @SequenceGenerator(name = "menu_generator", sequenceName = "menu_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "label", nullable = false, unique = true)
-    private String label;
+    @Column(name = "name", nullable = false, unique = true)
+    private String name;
 
-    public MenuEntity() {
-    }
+    @Column(name = "description", nullable = false)
+    private String description;
 
-    public MenuEntity(String label) {
-        this.label = label;
-    }
+    @OneToMany(mappedBy = "menu")
+    private List<StarterEntity> starter;
+
+    @OneToMany(mappedBy = "menu")
+    private List<MainCourseEntity> mainCourse;
+
+    @OneToMany(mappedBy = "menu")
+    private List<DessertEntity> desserts;
+
+    @OneToMany(mappedBy = "menu")
+    private List<DrinksEntity> drinks;
+
+    @Column(name = "price", nullable = false)
+    private double price;
 }
