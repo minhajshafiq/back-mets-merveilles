@@ -1,7 +1,6 @@
 package org.metsetmerveilles.domain.service.starter;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.metsetmerveilles.data_access.entity.MenuEntity;
 import org.metsetmerveilles.data_access.entity.StarterEntity;
 import org.metsetmerveilles.data_access.repository.MenuRepository;
 import org.metsetmerveilles.data_access.repository.StarterRepository;
@@ -36,21 +35,21 @@ public class StarterService implements IStarterService {
                 .toList();
     }
 
+    // Create a new Starter (Create)
     @Override
     public Starter createStarter(Starter starter) {
         StarterEntity starterEntity = StarterEntity.fromDomain(starter);
 
-        starter.menuId().ifPresent(id -> {
-            MenuEntity menuEntity = menuRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Menu not found"));
-            starterEntity.setMenu(menuEntity);
-        });
+        // Mutualisation du code START
+        starterEntity.associateMenu(starter.menuId(), menuRepository);
+        // Mutualisation du code END
 
         StarterEntity savedStarterEntity = starterRepository.save(starterEntity);
 
         return savedStarterEntity.toDomain();
     }
 
+    // Get a Starter by id (Read)
     @Override
     public Starter getStarterById(Long id) {
         StarterEntity starter = starterRepository.findById(id)
@@ -58,11 +57,24 @@ public class StarterService implements IStarterService {
         return starter.toDomain();
     }
 
+    // Update a Starter by id (Update)
     @Override
-    public Starter updateStarter(Long id, String name, String description, double price, Long menuId) {
-        return null;
+    public Starter updateStarter(Starter starter) {
+        StarterEntity starterEntity = starterRepository.findById(starter.id())
+                .orElseThrow(() -> new EntityNotFoundException("Starter not found"));
+
+        // Mutualisation du code START
+        starterEntity.associateMenu(starter.menuId(), menuRepository);
+
+        starterEntity.updateDomain(starter);
+        // Mutualisation du code END
+
+        StarterEntity savedStarterEntity = starterRepository.save(starterEntity);
+
+        return savedStarterEntity.toDomain();
     }
 
+    // Delete a Starter by id (Delete)
     @Override
     public void deleteStarter(Long id) {
         starterRepository.deleteById(id);

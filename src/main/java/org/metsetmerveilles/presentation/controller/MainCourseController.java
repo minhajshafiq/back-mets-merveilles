@@ -1,7 +1,7 @@
 package org.metsetmerveilles.presentation.controller;
 
 import org.metsetmerveilles.domain.model.MainCourse;
-import org.metsetmerveilles.domain.service.IMainCourseService;
+import org.metsetmerveilles.domain.service.maincourse.IMainCourseService;
 import org.metsetmerveilles.presentation.dto.MainCourseDto;
 import org.springframework.web.bind.annotation.*;
 

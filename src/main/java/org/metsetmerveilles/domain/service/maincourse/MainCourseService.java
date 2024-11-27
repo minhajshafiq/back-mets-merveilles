@@ -1,4 +1,4 @@
-package org.metsetmerveilles.domain.service;
+package org.metsetmerveilles.domain.service.maincourse;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.metsetmerveilles.data_access.entity.MainCourseEntity;
@@ -37,21 +37,19 @@ public class MainCourseService implements IMainCourseService {
                 .toList();
     }
 
+    // Create a new MainCourse (Create)
     @Override
     public MainCourse createMainCourse(MainCourse mainCourse) {
         MainCourseEntity mainCourseEntity = MainCourseEntity.fromDomain(mainCourse);
 
-        mainCourse.menuId().ifPresent(id -> {
-            MenuEntity menuEntity = menuRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Menu not found"));
-            mainCourseEntity.setMenu(menuEntity);
-        });
+        updateMenuOnMainCourse(mainCourseEntity, mainCourse.menuId());
 
         MainCourseEntity savedCourseEntity = mainCourseRepository.save(mainCourseEntity);
 
         return savedCourseEntity.toDomain();
     }
 
+    // Get a MainCourse by id (Read)
     @Override
     public MainCourse getMainCourseById(Long id)
             throws EntityNotFoundException {
@@ -60,15 +58,34 @@ public class MainCourseService implements IMainCourseService {
         return mainCourse.toDomain();
     }
 
+    // Update a MainCourse by id (Update)
     @Override
-    public MainCourse updateMainCourse(Long id, String name, String description, double price, Optional<Long> menuId)
-            throws RuntimeException {
-        return null;
+    public MainCourse updateMainCourse(MainCourse mainCourse) {
+        MainCourseEntity mainCourseEntity = mainCourseRepository.findById(mainCourse.id())
+                .orElseThrow(() -> new EntityNotFoundException("Main course not found"));
+
+        updateMenuOnMainCourse(mainCourseEntity, mainCourse.menuId());
+
+
+        MainCourseEntity savedMainCourseEntity = mainCourseRepository.save(mainCourseEntity);
+
+        return savedMainCourseEntity.toDomain();
     }
 
     @Override
-    public void deleteMainCourse(Long id)
-            throws RuntimeException {
+    public void deleteMainCourse(Long id) {
         mainCourseRepository.deleteById(id);
+    }
+
+
+    private void updateMenuOnMainCourse(MainCourseEntity mainCourseEntity, Optional<Long> menuId) {
+        if (menuId.isEmpty()) {
+            return;
+        }
+
+        MenuEntity menuEntity = menuRepository.findById(menuId.get())
+                .orElseThrow(() -> new EntityNotFoundException("menu with id %d not found !".formatted(menuId.get())));
+
+        mainCourseEntity.setMenu(menuEntity);
     }
 }
