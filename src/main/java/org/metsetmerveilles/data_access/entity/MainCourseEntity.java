@@ -1,6 +1,5 @@
 package org.metsetmerveilles.data_access.entity;
 
-import com.sun.tools.javac.Main;
 import jakarta.persistence.*;
 import lombok.*;
 import org.metsetmerveilles.domain.model.MainCourse;
@@ -40,11 +39,11 @@ public class MainCourseEntity {
         }
         return
                 builder
-                .id(mainCourse.id())
-                .name(mainCourse.name())
-                .description(mainCourse.description())
-                .price(mainCourse.price())
-                .build();
+                        .id(mainCourse.id())
+                        .name(mainCourse.name())
+                        .description(mainCourse.description())
+                        .price(mainCourse.price())
+                        .build();
     }
 
     public MainCourse toDomain() {

@@ -2,6 +2,7 @@ package org.metsetmerveilles.domain.service.desserts;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.metsetmerveilles.data_access.entity.DessertsEntity;
+import org.metsetmerveilles.data_access.entity.MenuEntity;
 import org.metsetmerveilles.data_access.repository.DessertsRepository;
 import org.metsetmerveilles.data_access.repository.MenuRepository;
 import org.metsetmerveilles.domain.model.Desserts;
@@ -40,9 +41,7 @@ public class DessertsService implements IDessertsService {
     public Desserts createDesserts(Desserts desserts) {
         DessertsEntity dessertsEntity = DessertsEntity.fromDomain(desserts);
 
-        // Mutualisation du code START
-        dessertsEntity.associateMenu(desserts.menuId(), menuRepository);
-        // Mutualisation du code END
+        updateMenuOnDesserts(dessertsEntity, desserts.menuId());
 
         DessertsEntity savedDessertsEntity = dessertsRepository.save(dessertsEntity);
 
@@ -63,11 +62,9 @@ public class DessertsService implements IDessertsService {
         DessertsEntity dessertsEntity = dessertsRepository.findById(desserts.id())
                 .orElseThrow(() -> new EntityNotFoundException("Desserts not found"));
 
-        // Mutualisation du code START
-        dessertsEntity.updateDomain(desserts);
+        updateDessertsProperties(desserts, dessertsEntity);
 
-        dessertsEntity.associateMenu(desserts.menuId(), menuRepository);
-        // Mutualisation du code END
+       updateMenuOnDesserts(dessertsEntity, desserts.menuId());
 
         DessertsEntity updatedDessertsEntity = dessertsRepository.save(dessertsEntity);
 
@@ -78,5 +75,23 @@ public class DessertsService implements IDessertsService {
     @Override
     public void deleteDesserts(Long id) {
         dessertsRepository.deleteById(id);
+    }
+
+    private void updateDessertsProperties(Desserts desserts, DessertsEntity dessertsEntity) {
+        dessertsEntity.setName(desserts.name());
+        dessertsEntity.setDescription(desserts.description());
+        dessertsEntity.setPrice(desserts.price());
+    }
+
+
+    private void updateMenuOnDesserts(DessertsEntity dessertsEntity, Optional<Long> menuId) {
+        if (menuId.isEmpty()) {
+            return;
+        }
+            MenuEntity menuEntity = menuRepository.findById(menuId.get())
+                    .orElseThrow(() -> new EntityNotFoundException("menu with id %d not found !".formatted(menuId.get())));
+
+        dessertsEntity.setMenu(menuEntity);
+
     }
 }

@@ -2,18 +2,30 @@ package org.metsetmerveilles.domain.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class MenuTest {
+
     @Test
     void shouldNotBuildWithInvalidLabel() {
-//        assertThrows(IllegalArgumentException.class, () -> new Menu(null));
-//        assertThrows(IllegalArgumentException.class, () -> new Menu(""));
+        // Vérifie que l'exception IllegalArgumentException est lancée pour un nom null
+        assertThrows(IllegalArgumentException.class, () -> new Menu(1L, null, "description", 1.0,
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
+
+        // Vérifie que l'exception IllegalArgumentException est lancée pour un nom vide
+        assertThrows(IllegalArgumentException.class, () -> new Menu(1L, "", "description", 1.0,
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
     }
 
     @Test
     void shouldBuildWithValidLabel() {
-        Menu menu = new Menu(1L, "Menu", "description", 1.0);
+        // Crée un menu valide en passant des Optional.empty() pour les listes
+        Menu menu = new Menu(1L, "Menu", "description", 1.0,
+                Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+
+        // Vérifie que le nom est correctement assigné
         assertEquals("Menu", menu.name());
     }
 }

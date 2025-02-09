@@ -2,6 +2,7 @@ package org.metsetmerveilles.data_access.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.metsetmerveilles.domain.model.Desserts;
 import org.metsetmerveilles.domain.model.Drinks;
 import org.metsetmerveilles.domain.model.MainCourse;
 
@@ -13,11 +14,11 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "drinks")
-public class DrinksEntity {
+@Table(name = "desserts")
+public class DessertsEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "drinks_generator")
-    @SequenceGenerator(name = "drinks_generator", sequenceName = "drinks_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "desserts_generator")
+    @SequenceGenerator(name = "desserts_generator", sequenceName = "desserts_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "name", nullable = false)
@@ -29,26 +30,26 @@ public class DrinksEntity {
     @Column(name = "price", nullable = false)
     private double price;
 
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "menu_id", nullable = true)
     private MenuEntity menu;
 
-    public static DrinksEntity fromDomain(Drinks drinks) {
-        DrinksEntity.DrinksEntityBuilder builder = DrinksEntity.builder();
-        if (drinks.menuId().isPresent()) {
-            builder.menu(MenuEntity.builder().id(drinks.menuId().get()).build());
+    public static DessertsEntity fromDomain(Desserts desserts) {
+        DessertsEntity.DessertsEntityBuilder builder = DessertsEntity.builder();
+        if (desserts.menuId().isPresent()) {
+            builder.menu(MenuEntity.builder().id(desserts.menuId().get()).build());
         }
         return
                 builder
-                        .id(drinks.id())
-                        .name(drinks.name())
-                        .description(drinks.description())
-                        .price(drinks.price())
+                        .id(desserts.id())
+                        .name(desserts.name())
+                        .description(desserts.description())
+                        .price(desserts.price())
                         .build();
     }
 
-    public Drinks toDomain() {
-        return new Drinks(
+    public Desserts toDomain() {
+        return new Desserts(
                 this.getId(),
                 this.getName(),
                 this.getDescription(),

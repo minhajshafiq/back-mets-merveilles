@@ -2,7 +2,6 @@ package org.metsetmerveilles.data_access.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.metsetmerveilles.domain.model.MainCourse;
 import org.metsetmerveilles.domain.model.Starter;
 
 import java.util.Optional;
@@ -30,17 +29,21 @@ public class StarterEntity {
     private double price;
 
     @ManyToOne(optional = true)
-    @JoinColumn(name = "menu_id", nullable = false)
+    @JoinColumn(name = "menu_id", nullable = true)
     private MenuEntity menu;
 
     public static StarterEntity fromDomain(Starter starter) {
-        return StarterEntity.builder()
-                .id(starter.id())
-                .name(starter.name())
-                .description(starter.description())
-                .price(starter.price())
-                .menu(MenuEntity.builder().id(starter.menuId().orElse(null)).build())
-                .build();
+        StarterEntity.StarterEntityBuilder builder = StarterEntity.builder();
+        if (starter.menuId().isPresent()) {
+            builder.menu(MenuEntity.builder().id(starter.menuId().get()).build());
+        }
+        return
+                builder
+                        .id(starter.id())
+                        .name(starter.name())
+                        .description(starter.description())
+                        .price(starter.price())
+                        .build();
     }
 
     public Starter toDomain() {

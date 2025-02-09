@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/main-course")
 public class MainCourseController {
 
@@ -21,13 +22,7 @@ public class MainCourseController {
     @GetMapping
     public List<MainCourseDto> list() {
         return mainCourseService.getAllMainCourses().stream()
-                .map(mainCourse -> new MainCourseDto(
-                        mainCourse.id(),
-                        mainCourse.name(),
-                        mainCourse.description(),
-                        mainCourse.price(),
-                        mainCourse.menuId().orElse(null)
-                ))
+                .map(MainCourseDto::fromDomain)
                 .toList();
     }
 
@@ -44,12 +39,32 @@ public class MainCourseController {
                 mainCourse
         );
 
-        return new MainCourseDto(
-                createdMainCourse.id(),
-                createdMainCourse.name(),
-                createdMainCourse.description(),
-                createdMainCourse.price(),
-                createdMainCourse.menuId().orElse(null)
+        return MainCourseDto.fromDomain(createdMainCourse);
+    }
+
+    @GetMapping("/{id}")
+    public MainCourseDto get(@PathVariable Long id) {
+        MainCourse mainCourse = mainCourseService.getMainCourseById(id);
+        return MainCourseDto.fromDomain(mainCourse);
+    }
+
+    @PutMapping("/{id}")
+    public MainCourseDto update(@PathVariable Long id, @RequestBody MainCourseDto mainCourseDto) {
+        MainCourse mainCourse = new MainCourse(
+                id,
+                mainCourseDto.name(),
+                mainCourseDto.description(),
+                mainCourseDto.price(),
+                Optional.ofNullable(mainCourseDto.menuId())
         );
+
+        MainCourse updatedMainCourse = mainCourseService.updateMainCourse(mainCourse);
+
+        return MainCourseDto.fromDomain(updatedMainCourse);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        mainCourseService.deleteMainCourse(id);
     }
 }

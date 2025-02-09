@@ -32,7 +32,7 @@ public class MainCourseService implements IMainCourseService {
                         mainCourseEntity.getName(),
                         mainCourseEntity.getDescription(),
                         mainCourseEntity.getPrice(),
-                        Optional.ofNullable(mainCourseEntity.getMenu().getId())
+                        mainCourseEntity.getMenu() != null ? Optional.of(mainCourseEntity.getMenu().getId()) : Optional.empty()
                 ))
                 .toList();
     }
@@ -55,6 +55,7 @@ public class MainCourseService implements IMainCourseService {
             throws EntityNotFoundException {
         MainCourseEntity mainCourse = mainCourseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Main course not found"));
+
         return mainCourse.toDomain();
     }
 
@@ -64,6 +65,8 @@ public class MainCourseService implements IMainCourseService {
         MainCourseEntity mainCourseEntity = mainCourseRepository.findById(mainCourse.id())
                 .orElseThrow(() -> new EntityNotFoundException("Main course not found"));
 
+        updateMainCourseProperties(mainCourseEntity, mainCourse);
+
         updateMenuOnMainCourse(mainCourseEntity, mainCourse.menuId());
 
 
@@ -72,11 +75,18 @@ public class MainCourseService implements IMainCourseService {
         return savedMainCourseEntity.toDomain();
     }
 
+    // Delete a MainCourse by id (Delete)
     @Override
     public void deleteMainCourse(Long id) {
         mainCourseRepository.deleteById(id);
     }
 
+
+    private void updateMainCourseProperties(MainCourseEntity mainCourseEntity, MainCourse mainCourse) {
+        mainCourseEntity.setName(mainCourse.name());
+        mainCourseEntity.setDescription(mainCourse.description());
+        mainCourseEntity.setPrice(mainCourse.price());
+    }
 
     private void updateMenuOnMainCourse(MainCourseEntity mainCourseEntity, Optional<Long> menuId) {
         if (menuId.isEmpty()) {

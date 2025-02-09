@@ -14,7 +14,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MainCourseStepDefs {
+public class DessertsStepDefs {
+
     @LocalServerPort
     private int port;
 
@@ -23,8 +24,9 @@ public class MainCourseStepDefs {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
     }
-    @When("I add a MainCourse with the following details")
-    public void iAddAMainCourseWithTheFollowingDetails(DataTable dataTable) {
+
+    @When("I add a Dessert with the following details")
+    public void iAddADessertWithTheFollowingDetails(DataTable dataTable) {
         Map<String, String> data = dataTable.transpose().asMap();
         String name = data.get("name");
         String description = data.get("description");
@@ -32,51 +34,50 @@ public class MainCourseStepDefs {
         String id = data.get("id");
         String menuId = data.get("menuId");
 
-        JSONObject mainCourseDto = new JSONObject();
-        mainCourseDto.put("id", id);
-        mainCourseDto.put("name", name);
-        mainCourseDto.put("description", description);
-        mainCourseDto.put("price", price);
-        mainCourseDto.put("menuId", menuId);
+        JSONObject dessertDto = new JSONObject();
+        dessertDto.put("id", id);
+        dessertDto.put("name", name);
+        dessertDto.put("description", description);
+        dessertDto.put("price", price);
+        dessertDto.put("menuId", menuId);
 
         RequestSpecification request = RestAssured.given();
         Response response = request
                 .header("Content-Type", "application/json")
-                .body(mainCourseDto.toJSONString())
-                .post("/main-course");
+                .body(dessertDto.toJSONString())
+                .post("/desserts");
 
         assertThat(response.getStatusCode()).isEqualTo(200);
-
     }
 
-    @Then("the MainCourse named {string} should be added")
-    public void theMainCourseShouldBeAdded(String mainCourseName) {
-        int mainCourseId = getMainCourseIdFromName(mainCourseName);
+    @Then("the Dessert named {string} should be added")
+    public void theDessertShouldBeAdded(String dessertName) {
+        int dessertId = getDessertIdFromName(dessertName);
         RequestSpecification request = RestAssured.given();
         Response response = request
                 .header("Content-Type", "application/json")
-                .get("/main-course/" + mainCourseId);
+                .get("/desserts/" + dessertId);
 
         assertThat(response.getStatusCode()).isEqualTo(200);
 
-        JSONObject mainCourse = response.getBody().as(JSONObject.class);
+        JSONObject dessert = response.getBody().as(JSONObject.class);
 
-        assertThat(mainCourse.getAsNumber("id")).isEqualTo(mainCourseId);
-        assertThat(mainCourse.getAsString("name")).isEqualTo(mainCourseName);
-        assertThat(mainCourse.getAsString("description")).isEqualTo("Italian");
-        assertThat(Double.parseDouble(mainCourse.get("price").toString())).isEqualTo(10.0);
-        assertThat(mainCourse.get("menuId")).isNull();
+        assertThat(dessert.getAsNumber("id")).isEqualTo(dessertId);
+        assertThat(dessert.getAsString("name")).isEqualTo(dessertName);
+        assertThat(dessert.getAsString("description")).isEqualTo("Sweet");
+        assertThat(Double.parseDouble(dessert.get("price").toString())).isEqualTo(5.0);
+        assertThat(dessert.get("menuId")).isNull();
     }
 
-    private int getMainCourseIdFromName(String mainCourseName) {
+    private int getDessertIdFromName(String dessertName) {
         RequestSpecification request = RestAssured.given();
         Response response = request
                 .header("Content-Type", "application/json")
-                .get("/main-course?name=" + mainCourseName);
+                .get("/desserts?name=" + dessertName);
 
         assertThat(response.getStatusCode()).isEqualTo(200);
 
-        JSONObject mainCourse = response.getBody().as(JSONObject.class);
-        return mainCourse.getAsNumber("id").intValue();
+        JSONObject dessert = response.getBody().as(JSONObject.class);
+        return dessert.getAsNumber("id").intValue();
     }
 }

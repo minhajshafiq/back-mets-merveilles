@@ -1,6 +1,8 @@
 package org.metsetmerveilles.domain.service.starter;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.metsetmerveilles.data_access.entity.MainCourseEntity;
+import org.metsetmerveilles.data_access.entity.MenuEntity;
 import org.metsetmerveilles.data_access.entity.StarterEntity;
 import org.metsetmerveilles.data_access.repository.MenuRepository;
 import org.metsetmerveilles.data_access.repository.StarterRepository;
@@ -40,9 +42,7 @@ public class StarterService implements IStarterService {
     public Starter createStarter(Starter starter) {
         StarterEntity starterEntity = StarterEntity.fromDomain(starter);
 
-        // Mutualisation du code START
-        starterEntity.associateMenu(starter.menuId(), menuRepository);
-        // Mutualisation du code END
+        updateMenuOnStarter(starterEntity, starter.menuId());
 
         StarterEntity savedStarterEntity = starterRepository.save(starterEntity);
 
@@ -63,11 +63,10 @@ public class StarterService implements IStarterService {
         StarterEntity starterEntity = starterRepository.findById(starter.id())
                 .orElseThrow(() -> new EntityNotFoundException("Starter not found"));
 
-        // Mutualisation du code START
-        starterEntity.associateMenu(starter.menuId(), menuRepository);
+        updateStarterProperties(starterEntity, starter);
 
-        starterEntity.updateDomain(starter);
-        // Mutualisation du code END
+        updateMenuOnStarter(starterEntity, starter.menuId());
+        
 
         StarterEntity savedStarterEntity = starterRepository.save(starterEntity);
 
@@ -78,5 +77,22 @@ public class StarterService implements IStarterService {
     @Override
     public void deleteStarter(Long id) {
         starterRepository.deleteById(id);
+    }
+
+    private void updateStarterProperties(StarterEntity starterEntity, Starter starter) {
+        starterEntity.setName(starter.name());
+        starterEntity.setDescription(starter.description());
+        starterEntity.setPrice(starter.price());
+    }
+
+    private void updateMenuOnStarter(StarterEntity starterEntity, Optional<Long> menuId) {
+        if (menuId.isEmpty()) {
+            return;
+        }
+
+        MenuEntity menuEntity = menuRepository.findById(menuId.get())
+                .orElseThrow(() -> new EntityNotFoundException("menu with id %d not found !".formatted(menuId.get())));
+
+        starterEntity.setMenu(menuEntity);
     }
 }

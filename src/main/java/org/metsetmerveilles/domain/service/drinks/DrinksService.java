@@ -2,6 +2,7 @@ package org.metsetmerveilles.domain.service.drinks;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.metsetmerveilles.data_access.entity.DrinksEntity;
+import org.metsetmerveilles.data_access.entity.MenuEntity;
 import org.metsetmerveilles.data_access.repository.DrinksRepository;
 import org.metsetmerveilles.data_access.repository.MenuRepository;
 import org.metsetmerveilles.domain.model.Drinks;
@@ -41,9 +42,7 @@ public class DrinksService implements IDrinksService {
     public Drinks createDrinks(Drinks drinks) {
         DrinksEntity drinksEntity = DrinksEntity.fromDomain(drinks);
 
-        // Mutualisation du code START
-        drinksEntity.associateMenu(drinks.menuId(), menuRepository);
-        // Mutualisation du code END
+        updateMenuOnDrinks(drinksEntity, drinks.menuId());
 
         DrinksEntity savedDrinksEntity = drinksRepository.save(drinksEntity);
 
@@ -65,11 +64,9 @@ public class DrinksService implements IDrinksService {
         DrinksEntity drinksEntity = drinksRepository.findById(drinks.id())
                 .orElseThrow(() -> new EntityNotFoundException("Drinks not found"));
 
-        // Mutualisation du code START
-        drinksEntity.updateDomain(drinks);
+        updateDrinksProperties(drinksEntity, drinks);
 
-        drinksEntity.associateMenu(drinks.menuId(), menuRepository);
-        // Mutualisation du code END
+        updateMenuOnDrinks(drinksEntity, drinks.menuId());
 
         DrinksEntity updatedDrinksEntity = drinksRepository.save(drinksEntity);
 
@@ -80,5 +77,23 @@ public class DrinksService implements IDrinksService {
     @Override
     public void deleteDrinks(Long id) {
         drinksRepository.deleteById(id);
+    }
+
+
+    private void updateDrinksProperties(DrinksEntity drinksEntity, Drinks drinks) {
+        drinksEntity.setName(drinks.name());
+        drinksEntity.setDescription(drinks.description());
+        drinksEntity.setPrice(drinks.price());
+    }
+
+    private void updateMenuOnDrinks(DrinksEntity drinksEntity, Optional<Long> menuId) {
+        if (menuId.isEmpty()) {
+            return;
+        }
+
+        MenuEntity menuEntity = menuRepository.findById(menuId.get())
+                .orElseThrow(() -> new EntityNotFoundException("menu with id %d not found !".formatted(menuId.get())));
+
+        drinksEntity.setMenu(menuEntity);
     }
 }
