@@ -1,10 +1,14 @@
 package org.metsetmerveilles.presentation.controller;
 
 import org.metsetmerveilles.domain.model.Desserts;
+import org.metsetmerveilles.domain.service.FirebaseStorageService;
 import org.metsetmerveilles.domain.service.desserts.IDessertsService;
 import org.metsetmerveilles.presentation.dto.DessertsDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +18,13 @@ import java.util.Optional;
 public class DessertsController {
 
     private final IDessertsService dessertsService;
+    private final FirebaseStorageService firebaseStorageService;
 
-    public DessertsController(IDessertsService dessertsService) {
+    public DessertsController(IDessertsService dessertsService, FirebaseStorageService firebaseStorageService) {
         this.dessertsService = dessertsService;
+        this.firebaseStorageService = firebaseStorageService;
     }
+
 
     @GetMapping
     public List<DessertsDto> list() {
@@ -26,16 +33,24 @@ public class DessertsController {
                 .toList();
     }
 
-    @PostMapping
-    public DessertsDto create(@RequestBody DessertsDto dessertsDto) {
+    @PostMapping(consumes = "multipart/form-data")
+    @ResponseStatus(HttpStatus.CREATED)
+    public DessertsDto create(@RequestPart("data") DessertsDto dessertsDto,
+                              @RequestPart("file") MultipartFile file) throws IOException {
+
+        // Uploader l'image vers Firebase Storage
+        String imageUrl = firebaseStorageService.uploadImage(file, "desserts");
+
+        // Créer l'objet Dessert
         Desserts desserts = new Desserts(
-                dessertsDto.id(),
+                null,
                 dessertsDto.name(),
                 dessertsDto.description(),
                 dessertsDto.price(),
+                imageUrl,
                 Optional.ofNullable(dessertsDto.menuId()));
 
-                Desserts createdDesserts = dessertsService.createDesserts(desserts);
+        Desserts createdDesserts = dessertsService.createDesserts(desserts);
 
         return DessertsDto.fromDomain(createdDesserts);
     }
@@ -53,6 +68,7 @@ public class DessertsController {
                 dessertsDto.name(),
                 dessertsDto.description(),
                 dessertsDto.price(),
+                dessertsDto.imageUrl(),
                 Optional.ofNullable(dessertsDto.menuId()));
 
         Desserts updatedDesserts = dessertsService.updateDesserts(desserts);

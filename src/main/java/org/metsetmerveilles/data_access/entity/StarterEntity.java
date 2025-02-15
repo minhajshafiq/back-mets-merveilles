@@ -28,6 +28,9 @@ public class StarterEntity {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "menu_id", nullable = true)
     private MenuEntity menu;
@@ -43,6 +46,7 @@ public class StarterEntity {
                         .name(starter.name())
                         .description(starter.description())
                         .price(starter.price())
+                        .imageUrl(starter.imageUrl())
                         .build();
     }
 
@@ -52,6 +56,7 @@ public class StarterEntity {
                 this.getName(),
                 this.getDescription(),
                 this.getPrice(),
+                this.getImageUrl(),
                 Optional.ofNullable(this.getMenu() != null ? this.getMenu().getId() : null)
         );
     }

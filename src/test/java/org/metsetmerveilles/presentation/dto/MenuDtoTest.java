@@ -13,7 +13,12 @@ class MenuDtoTest {
     @Test
     void ShouldBuildFromDomain() {
         // Créer un objet Menu
-        Menu menu = new Menu(1L, "name", "description", 1.0,
+        Menu menu = Menu.Create(
+                1L,
+                "name",
+                "description",
+                1.0,
+                "image_url",
                 Optional.of(List.of(1L)),
                 Optional.of(List.of(2L)),
                 Optional.of(List.of(3L)),
@@ -25,6 +30,7 @@ class MenuDtoTest {
                 "name",
                 "description",
                 1.0,
+                "image_url",
                 List.of(1L),  // starterIds
                 List.of(2L),  // mainCourseIds
                 List.of(3L),  // dessertsIds

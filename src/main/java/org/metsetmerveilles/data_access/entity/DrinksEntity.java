@@ -29,6 +29,9 @@ public class DrinksEntity {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne
     @JoinColumn(name = "menu_id", nullable = true)
     private MenuEntity menu;
@@ -44,6 +47,7 @@ public class DrinksEntity {
                         .name(drinks.name())
                         .description(drinks.description())
                         .price(drinks.price())
+                        .imageUrl(drinks.imageUrl())
                         .build();
     }
 
@@ -53,6 +57,7 @@ public class DrinksEntity {
                 this.getName(),
                 this.getDescription(),
                 this.getPrice(),
+                this.getImageUrl(),
                 Optional.ofNullable(this.getMenu() != null ? this.getMenu().getId() : null)
         );
     }

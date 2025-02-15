@@ -32,6 +32,7 @@ public class MainCourseService implements IMainCourseService {
                         mainCourseEntity.getName(),
                         mainCourseEntity.getDescription(),
                         mainCourseEntity.getPrice(),
+                        mainCourseEntity.getImageUrl(),
                         mainCourseEntity.getMenu() != null ? Optional.of(mainCourseEntity.getMenu().getId()) : Optional.empty()
                 ))
                 .toList();

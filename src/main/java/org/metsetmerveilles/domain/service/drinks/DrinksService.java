@@ -32,6 +32,7 @@ public class DrinksService implements IDrinksService {
                         drinksEntity.getName(),
                         drinksEntity.getDescription(),
                         drinksEntity.getPrice(),
+                        drinksEntity.getImageUrl(),
                         Optional.ofNullable(drinksEntity.getMenu().getId())
                 ))
                 .toList();

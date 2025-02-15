@@ -28,6 +28,9 @@ public class MainCourseEntity {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "menu_id", nullable = true)
     private MenuEntity menu;
@@ -43,6 +46,7 @@ public class MainCourseEntity {
                         .name(mainCourse.name())
                         .description(mainCourse.description())
                         .price(mainCourse.price())
+                        .imageUrl(mainCourse.imageUrl())
                         .build();
     }
 
@@ -52,6 +56,7 @@ public class MainCourseEntity {
                 this.getName(),
                 this.getDescription(),
                 this.getPrice(),
+                this.getImageUrl(),
                 Optional.ofNullable(this.getMenu() != null ? this.getMenu().getId() : null)
         );
     }

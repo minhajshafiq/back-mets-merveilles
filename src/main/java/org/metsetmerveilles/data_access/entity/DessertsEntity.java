@@ -30,6 +30,9 @@ public class DessertsEntity {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "menu_id", nullable = true)
     private MenuEntity menu;
@@ -45,6 +48,7 @@ public class DessertsEntity {
                         .name(desserts.name())
                         .description(desserts.description())
                         .price(desserts.price())
+                        .imageUrl(desserts.imageUrl())
                         .build();
     }
 
@@ -54,6 +58,7 @@ public class DessertsEntity {
                 this.getName(),
                 this.getDescription(),
                 this.getPrice(),
+                this.getImageUrl(),
                 Optional.ofNullable(this.getMenu() != null ? this.getMenu().getId() : null)
         );
     }

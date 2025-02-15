@@ -42,6 +42,9 @@ public class MenuEntity {
     @Column(name = "price", nullable = false)
     private double price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     public static MenuEntity fromDomain(Menu menu) {
         MenuEntity.MenuEntityBuilder builder = MenuEntity.builder();
 
@@ -82,16 +85,18 @@ public class MenuEntity {
                         .id(menu.id())
                         .name(menu.name())
                         .description(menu.description())
-                        .price(menu.price())
+                        .price(menu.price().value())
+                        .imageUrl(menu.imageUrl())
                         .build();
     }
 
     public Menu toDomain() {
-        return new Menu(
+        return Menu.Create(
                 this.getId(),
                 this.getName(),
                 this.getDescription(),
                 this.getPrice(),
+                this.getImageUrl(),
                 this.getStarter() != null
                         ? Optional.of(this.getStarter().stream().map(StarterEntity::getId).toList())
                         : Optional.empty(),

@@ -10,6 +10,7 @@ import io.restassured.specification.RequestSpecification;
 import net.minidev.json.JSONObject;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.io.File;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,8 @@ public class DessertsStepDefs {
 
     @LocalServerPort
     private int port;
+
+    private Response response;
 
     @Before
     public void setUp() {
@@ -33,6 +36,7 @@ public class DessertsStepDefs {
         String price = data.get("price");
         String id = data.get("id");
         String menuId = data.get("menuId");
+        String imageUrl = data.get("imageUrl");
 
         JSONObject dessertDto = new JSONObject();
         dessertDto.put("id", id);
@@ -41,43 +45,35 @@ public class DessertsStepDefs {
         dessertDto.put("price", price);
         dessertDto.put("menuId", menuId);
 
+        File imageFile = new File("src/test/resources/test-image/" + imageUrl);
+        assertThat(imageFile).exists();
+
         RequestSpecification request = RestAssured.given();
-        Response response = request
-                .header("Content-Type", "application/json")
-                .body(dessertDto.toJSONString())
+        response = request
+                .header("Content-Type", "multipart/form-data")
+                .multiPart("data", dessertDto.toJSONString(), "application/json")
+                .multiPart("file", imageFile)
                 .post("/desserts");
 
-        assertThat(response.getStatusCode()).isEqualTo(200);
+        assertThat(response.getStatusCode()).isEqualTo(201);
     }
 
     @Then("the Dessert named {string} should be added")
     public void theDessertShouldBeAdded(String dessertName) {
-        int dessertId = getDessertIdFromName(dessertName);
         RequestSpecification request = RestAssured.given();
-        Response response = request
+        response = request
                 .header("Content-Type", "application/json")
-                .get("/desserts/" + dessertId);
+                .get("/desserts/2");
 
         assertThat(response.getStatusCode()).isEqualTo(200);
 
         JSONObject dessert = response.getBody().as(JSONObject.class);
 
-        assertThat(dessert.getAsNumber("id")).isEqualTo(dessertId);
+        assertThat(dessert.getAsNumber("id")).isEqualTo(2);
         assertThat(dessert.getAsString("name")).isEqualTo(dessertName);
-        assertThat(dessert.getAsString("description")).isEqualTo("Sweet");
-        assertThat(Double.parseDouble(dessert.get("price").toString())).isEqualTo(5.0);
+        assertThat(dessert.getAsString("description")).isEqualTo("Italian");
+        assertThat(Double.parseDouble(dessert.get("price").toString())).isEqualTo(7);
         assertThat(dessert.get("menuId")).isNull();
-    }
-
-    private int getDessertIdFromName(String dessertName) {
-        RequestSpecification request = RestAssured.given();
-        Response response = request
-                .header("Content-Type", "application/json")
-                .get("/desserts?name=" + dessertName);
-
-        assertThat(response.getStatusCode()).isEqualTo(200);
-
-        JSONObject dessert = response.getBody().as(JSONObject.class);
-        return dessert.getAsNumber("id").intValue();
+        assertThat(dessert.get("imageUrl")).isNotNull();
     }
 }

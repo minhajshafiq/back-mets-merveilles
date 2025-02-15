@@ -43,6 +43,7 @@ CREATE TABLE menu
     MAIN_COURSE_ID INT,
     DESSERT_ID INT,
     DRINK_ID INT,
+    IMAGE_URL  VARCHAR(255),  -- Ajout du champ image_url
     PRIMARY KEY (ID),
     UNIQUE (NAME)
 );
@@ -54,6 +55,7 @@ CREATE TABLE starter
     DESCRIPTION VARCHAR(100),
     PRICE DECIMAL(10, 2),
     MENU_ID INT,
+    IMAGE_URL VARCHAR(255),  -- Ajout du champ image_url
     PRIMARY KEY (ID),
     UNIQUE (NAME)
 );
@@ -65,6 +67,7 @@ CREATE TABLE main_course
     DESCRIPTION VARCHAR(100),
     PRICE DECIMAL(10, 2),
     MENU_ID INT,
+    IMAGE_URL VARCHAR(255),  -- Ajout du champ image_url
     PRIMARY KEY (ID),
     UNIQUE (NAME)
 );
@@ -76,6 +79,7 @@ CREATE TABLE desserts
     DESCRIPTION VARCHAR(100),
     PRICE DECIMAL(10, 2),
     MENU_ID INT,
+    IMAGE_URL VARCHAR(255),  -- Ajout du champ image_url
     PRIMARY KEY (ID),
     UNIQUE (NAME)
 );
@@ -87,6 +91,7 @@ CREATE TABLE drinks
     DESCRIPTION VARCHAR(100),
     PRICE DECIMAL(10, 2),
     MENU_ID INT,
+    IMAGE_URL VARCHAR(255),  -- Ajout du champ image_url
     PRIMARY KEY (ID),
     UNIQUE (NAME)
 );

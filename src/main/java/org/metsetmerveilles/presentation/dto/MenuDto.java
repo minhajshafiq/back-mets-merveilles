@@ -9,6 +9,7 @@ public record MenuDto(
         String name,
         String description,
         double price,
+        String imageUrl,
         List<Long> starterIds,
         List<Long> mainCourseIds,
         List<Long> dessertsIds,
@@ -19,7 +20,8 @@ public record MenuDto(
                 menu.id(),
                 menu.name(),
                 menu.description(),
-                menu.price(),
+                menu.price().value(),
+                menu.imageUrl(),
                 menu.starterIds().orElse(List.of()), // Ajout des starters liés
                 menu.mainCourseIds().orElse(List.of()), // Ajout des main courses liés
                 menu.dessertsIds().orElse(List.of()), // Ajout des desserts liés

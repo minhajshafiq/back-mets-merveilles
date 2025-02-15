@@ -32,6 +32,7 @@ public class StarterService implements IStarterService {
                         starterEntity.getName(),
                         starterEntity.getDescription(),
                         starterEntity.getPrice(),
+                        starterEntity.getImageUrl(),
                         Optional.ofNullable(starterEntity.getMenu().getId())
                 ))
                 .toList();

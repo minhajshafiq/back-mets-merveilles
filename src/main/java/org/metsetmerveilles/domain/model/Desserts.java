@@ -4,7 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
-public record Desserts(Long id, String name, String description, double price, Optional <Long> menuId) {
+public record Desserts(
+        Long id,
+        String name,
+        String description,
+        double price,
+        String imageUrl,
+        Optional <Long> menuId
+) {
     public Desserts {
         // Validation pour le champ `name`
         if (StringUtils.isBlank(name)) {

@@ -37,11 +37,12 @@ public class MenuService implements IMenuService {
     @Override
     public List<Menu> getAllMenus() {
         return menuRepository.findAll().stream()
-                .map(menuEntity -> new Menu(
+                .map(menuEntity -> Menu.Create(
                         menuEntity.getId(),
                         menuEntity.getName(),
                         menuEntity.getDescription(),
                         menuEntity.getPrice(),
+                        menuEntity.getImageUrl(),
                         Optional.ofNullable(menuEntity.getStarter())
                                 .map(starters -> starters.stream()
                                         .map(StarterEntity::getId)
@@ -160,6 +161,6 @@ public class MenuService implements IMenuService {
     private void updateMenuProperties(MenuEntity menuEntity, Menu menu) {
         menuEntity.setName(menu.name());
         menuEntity.setDescription(menu.description());
-        menuEntity.setPrice(menu.price());
+        menuEntity.setPrice(menu.price().value());
     }
 }

@@ -6,6 +6,7 @@ import org.metsetmerveilles.data_access.entity.MenuEntity;
 import org.metsetmerveilles.data_access.repository.DessertsRepository;
 import org.metsetmerveilles.data_access.repository.MenuRepository;
 import org.metsetmerveilles.domain.model.Desserts;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,7 @@ public class DessertsService implements IDessertsService {
                         dessertsEntity.getName(),
                         dessertsEntity.getDescription(),
                         dessertsEntity.getPrice(),
+                        dessertsEntity.getImageUrl(),
                         Optional.ofNullable(dessertsEntity.getMenu().getId())
                 ))
                 .toList();
@@ -64,7 +66,7 @@ public class DessertsService implements IDessertsService {
 
         updateDessertsProperties(desserts, dessertsEntity);
 
-       updateMenuOnDesserts(dessertsEntity, desserts.menuId());
+        updateMenuOnDesserts(dessertsEntity, desserts.menuId());
 
         DessertsEntity updatedDessertsEntity = dessertsRepository.save(dessertsEntity);
 
@@ -88,8 +90,8 @@ public class DessertsService implements IDessertsService {
         if (menuId.isEmpty()) {
             return;
         }
-            MenuEntity menuEntity = menuRepository.findById(menuId.get())
-                    .orElseThrow(() -> new EntityNotFoundException("menu with id %d not found !".formatted(menuId.get())));
+        MenuEntity menuEntity = menuRepository.findById(menuId.get())
+                .orElseThrow(() -> new EntityNotFoundException("menu with id %d not found !".formatted(menuId.get())));
 
         dessertsEntity.setMenu(menuEntity);
 

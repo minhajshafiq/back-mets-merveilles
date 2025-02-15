@@ -10,6 +10,7 @@ import io.restassured.specification.RequestSpecification;
 import net.minidev.json.JSONObject;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.io.File;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,11 +19,14 @@ public class MainCourseStepDefs {
     @LocalServerPort
     private int port;
 
+    private Response response;
+
     @Before
     public void setUp() {
         RestAssured.port = port;
         RestAssured.baseURI = "http://localhost";
     }
+
     @When("I add a MainCourse with the following details")
     public void iAddAMainCourseWithTheFollowingDetails(DataTable dataTable) {
         Map<String, String> data = dataTable.transpose().asMap();
@@ -31,6 +35,7 @@ public class MainCourseStepDefs {
         String price = data.get("price");
         String id = data.get("id");
         String menuId = data.get("menuId");
+        String imageUrl = data.get("imageUrl");
 
         JSONObject mainCourseDto = new JSONObject();
         mainCourseDto.put("id", id);
@@ -39,44 +44,35 @@ public class MainCourseStepDefs {
         mainCourseDto.put("price", price);
         mainCourseDto.put("menuId", menuId);
 
+        File imageFile = new File("src/test/resources/test-image/" + imageUrl);
+        assertThat(imageFile).exists();
+
         RequestSpecification request = RestAssured.given();
-        Response response = request
-                .header("Content-Type", "application/json")
-                .body(mainCourseDto.toJSONString())
+        response = request
+                .header("Content-Type", "multipart/form-data")
+                .multiPart("data", mainCourseDto.toJSONString(), "application/json")
+                .multiPart("file", imageFile)
                 .post("/main-course");
 
-        assertThat(response.getStatusCode()).isEqualTo(200);
-
+        assertThat(response.getStatusCode()).isEqualTo(201);
     }
 
     @Then("the MainCourse named {string} should be added")
     public void theMainCourseShouldBeAdded(String mainCourseName) {
-        int mainCourseId = getMainCourseIdFromName(mainCourseName);
         RequestSpecification request = RestAssured.given();
-        Response response = request
+        response = request
                 .header("Content-Type", "application/json")
-                .get("/main-course/" + mainCourseId);
+                .get("/main-course/1");
 
         assertThat(response.getStatusCode()).isEqualTo(200);
 
         JSONObject mainCourse = response.getBody().as(JSONObject.class);
 
-        assertThat(mainCourse.getAsNumber("id")).isEqualTo(mainCourseId);
+        assertThat(mainCourse.getAsNumber("id")).isEqualTo(1);
         assertThat(mainCourse.getAsString("name")).isEqualTo(mainCourseName);
         assertThat(mainCourse.getAsString("description")).isEqualTo("Italian");
         assertThat(Double.parseDouble(mainCourse.get("price").toString())).isEqualTo(10.0);
         assertThat(mainCourse.get("menuId")).isNull();
-    }
-
-    private int getMainCourseIdFromName(String mainCourseName) {
-        RequestSpecification request = RestAssured.given();
-        Response response = request
-                .header("Content-Type", "application/json")
-                .get("/main-course?name=" + mainCourseName);
-
-        assertThat(response.getStatusCode()).isEqualTo(200);
-
-        JSONObject mainCourse = response.getBody().as(JSONObject.class);
-        return mainCourse.getAsNumber("id").intValue();
+        assertThat(mainCourse.get("imageUrl")).isNotNull();
     }
 }
