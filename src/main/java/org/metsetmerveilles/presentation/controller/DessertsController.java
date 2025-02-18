@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://front-mets-merveilles.vercel.app/")
 @RequestMapping("/desserts")
 public class DessertsController {
 

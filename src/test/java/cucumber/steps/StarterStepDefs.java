@@ -11,7 +11,6 @@ import net.minidev.json.JSONObject;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;

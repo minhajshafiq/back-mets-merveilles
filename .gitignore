@@ -35,3 +35,4 @@ build/
 
 ### DB ###
 *.db
+src/main/resources/firebase-key.json
