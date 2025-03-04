@@ -43,7 +43,7 @@ public class DessertsController {
 
         // Créer l'objet Dessert
         Desserts desserts = new Desserts(
-                null,
+                dessertsDto.id(),
                 dessertsDto.name(),
                 dessertsDto.description(),
                 dessertsDto.price(),

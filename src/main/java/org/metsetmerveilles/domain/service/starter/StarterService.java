@@ -33,7 +33,7 @@ public class StarterService implements IStarterService {
                         starterEntity.getDescription(),
                         starterEntity.getPrice(),
                         starterEntity.getImageUrl(),
-                        Optional.ofNullable(starterEntity.getMenu().getId())
+                        starterEntity.getMenu() != null ? Optional.of(starterEntity.getMenu().getId()) : Optional.empty()
                 ))
                 .toList();
     }

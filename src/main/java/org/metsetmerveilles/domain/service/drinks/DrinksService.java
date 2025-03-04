@@ -33,7 +33,7 @@ public class DrinksService implements IDrinksService {
                         drinksEntity.getDescription(),
                         drinksEntity.getPrice(),
                         drinksEntity.getImageUrl(),
-                        Optional.ofNullable(drinksEntity.getMenu().getId())
+                        drinksEntity.getMenu() != null ? Optional.of(drinksEntity.getMenu().getId()) : Optional.empty()
                 ))
                 .toList();
     }
